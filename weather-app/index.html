@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Weather App</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 40px;
+            background-color: #f4f6f9;
+            color: #333;
+            text-align: center;
+        }
+        .weather-container {
+            max-width: 350px;
+            margin: 30px auto;
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+        }
+        input {
+            width: 70%;
+            height: 40px;
+            font-size: 16px;
+            border: 1px solid #ddd;
+            border-radius: 8px 0 0 8px;
+            padding: 0 10px;
+            box-sizing: border-box;
+            outline: none;
+        }
+        button {
+            width: 25%;
+            height: 40px;
+            font-size: 16px;
+            font-weight: bold;
+            border: none;
+            background-color: #007bff;
+            color: white;
+            border-radius: 0 8px 8px 0;
+            cursor: pointer;
+            margin-left: -5px;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        .weather-info {
+            margin-top: 25px;
+        }
+        .temp {
+            font-size: 48px;
+            font-weight: bold;
+            margin: 10px 0;
+            color: #222;
+        }
+        .back-link {
+            display: inline-block;
+            margin-top: 20px;
+            color: #007bff;
+            text-decoration: none;
+            font-weight: bold;
+        }
+        .back-link:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+
+    <h2>Weather App Project</h2>
+    <p>A simple app to check the weather locally.</p>
+
+    <div class="weather-container">
+        <input type="text" id="cityInput" placeholder="Enter city name...">
+        <button onclick="getWeather()">Search</button>
+
+        <div class="weather-info">
+            <h3 id="cityName">New York</h3>
+            <div class="temp" id="temperature">24°C</div>
+            <p id="description">Sunny Sky</p>
+        </div>
+    </div>
+
+    <a href="../index.html" class="back-link">← Back to Portfolio</a>
+
+    <script>
+        function getWeather() {
+            let city = document.getElementById('cityInput').value;
+            if (city === "") {
+                alert("Please type a city name!");
+                return;
+            }
+            
+            // Setting up fake live data for local display testing
+            document.getElementById('cityName').innerText = city.charAt(0).toUpperCase() + city.slice(1);
+            
+            // Generate a random number just to make the UI look like it works locally!
+            let randomTemp = Math.floor(Math.random() * (35 - 15 + 1)) + 15;
+            document.getElementById('temperature').innerText = randomTemp + "°C";
+            
+            let conditions = ["Sunny Sky", "Partly Cloudy", "Heavy Rain", "Thundery Weather", "Clear Sky"];
+            let randomCondition = conditions[Math.floor(Math.random() * conditions.length)];
+            document.getElementById('description').innerText = randomCondition;
+        }
+    </script>
+</body>

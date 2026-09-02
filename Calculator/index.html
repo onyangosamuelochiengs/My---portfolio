@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Calculator</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 40px;
+            background-color: #f4f6f9;
+            color: #333;
+            text-align: center;
+        }
+        .calc-container {
+            max-width: 320px;
+            margin: 30px auto;
+            background: white;
+            padding: 25px;
+            border-radius: 15px;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+        }
+        input {
+            width: 100%;
+            height: 50px;
+            margin-bottom: 20px;
+            text-align: right;
+            font-size: 24px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            padding: 5px 10px;
+            box-sizing: border-box;
+            background-color: #f8f9fa;
+        }
+        .btn-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 10px;
+        }
+        button {
+            height: 50px;
+            font-size: 18px;
+            font-weight: bold;
+            border: none;
+            border-radius: 8px;
+            background-color: #e9ecef;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+        button:hover {
+            background-color: #dee2e6;
+        }
+        button.operator {
+            background-color: #007bff;
+            color: white;
+        }
+        button.operator:hover {
+            background-color: #0056b3;
+        }
+        button.clear {
+            background-color: #dc3545;
+            color: white;
+        }
+        button.clear:hover {
+            background-color: #bd2130;
+        }
+        .back-link {
+            display: inline-block;
+            margin-top: 20px;
+            color: #007bff;
+            text-decoration: none;
+            font-weight: bold;
+        }
+        .back-link:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+
+    <h2>Calculator Project</h2>
+    <p>A simple project built locally on my laptop.</p>
+
+    <div class="calc-container">
+        <input type="text" id="result" placeholder="0" readonly>
+        <div class="btn-grid">
+            <button class="clear" onclick="clearCalc()">C</button>
+            <button class="operator" onclick="appendNum('/')">/</button>
+            <button class="operator" onclick="appendNum('*')">*</button>
+            <button class="operator" onclick="appendNum('-')">-</button>
+            
+            <button onclick="appendNum('7')">7</button>
+            <button onclick="appendNum('8')">8</button>
+            <button onclick="appendNum('9')">9</button>
+            <button class="operator" rowspan="2" onclick="appendNum('+')">+</button>
+            
+            <button onclick="appendNum('4')">4</button>
+            <button onclick="appendNum('5')">5</button>
+            <button onclick="appendNum('6')">6</button>
+            <button class="operator" onclick="calculate()">=</button>
+            
+            <button onclick="appendNum('1')">1</button>
+            <button onclick="appendNum('2')">2</button>
+            <button onclick="appendNum('3')">3</button>
+            <button onclick="appendNum('0')">0</button>
+        </div>
+    </div>
+
+    <a href="../index.html" class="back-link">← Back to Portfolio</a>
+
+    <script>
+        let result = document.getElementById('result');
+        function appendNum(num) { result.value += num; }
+        function clearCalc() { result.value = ''; }
+        function calculate() {
+            try { result.value = eval(result.value); }
+            catch(err) { result.value = 'Error'; }
+        }
+    </script>
+</body>
+</html>
