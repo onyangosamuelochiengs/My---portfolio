@@ -3,12 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>My Calculator</title>
+    <title>Calculator | Samuel's Portfolio</title>
     <style>
         body {
             font-family: Arial, sans-serif;
             margin: 0;
-            padding: 40px;
+            padding: 40px 20px;
             background-color: #f4f6f9;
             color: #333;
             text-align: center;
@@ -16,14 +16,14 @@
         .calc-container {
             max-width: 320px;
             margin: 30px auto;
-            background: white;
+            background: #fff;
             padding: 25px;
             border-radius: 15px;
             box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
         }
-        input {
+        #display {
             width: 100%;
-            height: 50px;
+            height: 60px;
             margin-bottom: 20px;
             text-align: right;
             font-size: 24px;
@@ -32,38 +32,51 @@
             padding: 5px 10px;
             box-sizing: border-box;
             background-color: #f8f9fa;
+            color: #222;
         }
-        .btn-grid {
+        .keys {
             display: grid;
             grid-template-columns: repeat(4, 1fr);
             gap: 10px;
         }
-        button {
+        .keys button {
             height: 50px;
             font-size: 18px;
             font-weight: bold;
             border: none;
             border-radius: 8px;
             background-color: #e9ecef;
+            color: #222;
             cursor: pointer;
-            transition: 0.2s;
+            transition: background-color 0.2s;
         }
-        button:hover {
+        .keys button:hover {
             background-color: #dee2e6;
         }
-        button.operator {
+        .keys button.op {
             background-color: #007bff;
-            color: white;
+            color: #fff;
         }
-        button.operator:hover {
+        .keys button.op:hover {
             background-color: #0056b3;
         }
-        button.clear {
+        .keys button.clear {
             background-color: #dc3545;
-            color: white;
+            color: #fff;
         }
-        button.clear:hover {
+        .keys button.clear:hover {
             background-color: #bd2130;
+        }
+        .keys button.equals {
+            grid-row: span 2;
+            height: auto;
+        }
+        .keys button.zero {
+            grid-column: span 2;
+        }
+        .keys button:focus-visible {
+            outline: 3px solid #ffd700;
+            outline-offset: 2px;
         }
         .back-link {
             display: inline-block;
@@ -79,44 +92,191 @@
 </head>
 <body>
 
-    <h2>Calculator Project</h2>
-    <p>A simple project built locally on my laptop.</p>
+    <h2>Calculator App</h2>
+    <p>Click the buttons or type on your keyboard.</p>
 
     <div class="calc-container">
-        <input type="text" id="result" placeholder="0" readonly>
-        <div class="btn-grid">
-            <button class="clear" onclick="clearCalc()">C</button>
-            <button class="operator" onclick="appendNum('/')">/</button>
-            <button class="operator" onclick="appendNum('*')">*</button>
-            <button class="operator" onclick="appendNum('-')">-</button>
-            
-            <button onclick="appendNum('7')">7</button>
-            <button onclick="appendNum('8')">8</button>
-            <button onclick="appendNum('9')">9</button>
-            <button class="operator" rowspan="2" onclick="appendNum('+')">+</button>
-            
-            <button onclick="appendNum('4')">4</button>
-            <button onclick="appendNum('5')">5</button>
-            <button onclick="appendNum('6')">6</button>
-            <button class="operator" onclick="calculate()">=</button>
-            
-            <button onclick="appendNum('1')">1</button>
-            <button onclick="appendNum('2')">2</button>
-            <button onclick="appendNum('3')">3</button>
-            <button onclick="appendNum('0')">0</button>
+        <input type="text" id="display" value="0" readonly aria-label="Calculator display">
+
+        <div class="keys">
+            <button class="clear" data-action="clear">C</button>
+            <button data-action="back" aria-label="Backspace">⌫</button>
+            <button class="op" data-key="(">(</button>
+            <button class="op" data-key=")">)</button>
+
+            <button data-key="7">7</button>
+            <button data-key="8">8</button>
+            <button data-key="9">9</button>
+            <button class="op" data-key="/">÷</button>
+
+            <button data-key="4">4</button>
+            <button data-key="5">5</button>
+            <button data-key="6">6</button>
+            <button class="op" data-key="*">×</button>
+
+            <button data-key="1">1</button>
+            <button data-key="2">2</button>
+            <button data-key="3">3</button>
+            <button class="op" data-key="-">−</button>
+
+            <button class="zero" data-key="0">0</button>
+            <button data-key=".">.</button>
+            <button class="op" data-key="+">+</button>
+            <button class="op equals" data-action="equals">=</button>
         </div>
     </div>
 
     <a href="../index.html" class="back-link">← Back to Portfolio</a>
 
     <script>
-        let result = document.getElementById('result');
-        function appendNum(num) { result.value += num; }
-        function clearCalc() { result.value = ''; }
-        function calculate() {
-            try { result.value = eval(result.value); }
-            catch(err) { result.value = 'Error'; }
+        const display = document.getElementById('display');
+        let expr = '';            // what the user has typed, e.g. "12+3*4"
+        let justEvaluated = false;
+
+        /* ---------- Safe evaluator (no eval) ----------
+           Supports + - * / parentheses, decimals and unary minus,
+           with the normal order of operations. */
+        function evaluate(text) {
+            const tokens = text.match(/\d+\.?\d*|[()+\-*/]/g);
+            if (!tokens || tokens.join('') !== text) {
+                throw new Error('Invalid expression');
+            }
+
+            let pos = 0;
+            const peek = () => tokens[pos];
+            const next = () => tokens[pos++];
+
+            function parseExpression() {          // handles + and -
+                let value = parseTerm();
+                while (peek() === '+' || peek() === '-') {
+                    const op = next();
+                    const right = parseTerm();
+                    value = op === '+' ? value + right : value - right;
+                }
+                return value;
+            }
+
+            function parseTerm() {                // handles * and /
+                let value = parseFactor();
+                while (peek() === '*' || peek() === '/') {
+                    const op = next();
+                    const right = parseFactor();
+                    if (op === '/' && right === 0) throw new Error('Division by zero');
+                    value = op === '*' ? value * right : value / right;
+                }
+                return value;
+            }
+
+            function parseFactor() {              // numbers, (parentheses), unary minus
+                const token = next();
+                if (token === '-') return -parseFactor();
+                if (token === '(') {
+                    const value = parseExpression();
+                    if (next() !== ')') throw new Error('Missing )');
+                    return value;
+                }
+                const number = parseFloat(token);
+                if (Number.isNaN(number)) throw new Error('Unexpected token');
+                return number;
+            }
+
+            const result = parseExpression();
+            if (pos !== tokens.length) throw new Error('Unexpected input');
+            return result;
         }
+
+        /* ---------- Display helpers ---------- */
+        function prettify(text) {
+            return text.replace(/\*/g, '×').replace(/\//g, '÷').replace(/-/g, '−');
+        }
+
+        function render(text) {
+            display.value = text === '' ? '0' : prettify(text);
+        }
+
+        /* ---------- Actions ---------- */
+        function addKey(key) {
+            const isOperator = '+-*/'.includes(key);
+
+            if (justEvaluated) {
+                // Typing a number after "=" starts fresh; an operator continues from the result.
+                if (!isOperator) expr = '';
+                justEvaluated = false;
+            }
+
+            if (key === '.') {
+                const currentNumber = expr.split(/[+\-*/()]/).pop();
+                if (currentNumber.includes('.')) return;   // only one decimal per number
+                if (currentNumber === '') expr += '0';     // ".5" becomes "0.5"
+            }
+
+            if (isOperator) {
+                if (expr === '' && key !== '-') return;     // no leading + * /
+                if (/[+\-*/]$/.test(expr)) {
+                    expr = expr.slice(0, -1);               // replace the previous operator
+                }
+            }
+
+            expr += key;
+            render(expr);
+        }
+
+        function calculate() {
+            const text = expr.replace(/[+\-*/(]+$/, '');   // ignore a dangling operator
+            if (text === '') return;
+
+            try {
+                const result = evaluate(text);
+                // Round away floating-point noise, e.g. 0.1 + 0.2 -> 0.3
+                expr = String(parseFloat(result.toFixed(10)));
+                render(expr);
+            } catch (error) {
+                expr = '';
+                display.value = 'Error';
+            }
+            justEvaluated = true;
+        }
+
+        function clearAll() {
+            expr = '';
+            justEvaluated = false;
+            render('');
+        }
+
+        function backspace() {
+            if (justEvaluated) return clearAll();
+            expr = expr.slice(0, -1);
+            render(expr);
+        }
+
+        /* ---------- Mouse / touch ---------- */
+        document.querySelector('.keys').addEventListener('click', (event) => {
+            const button = event.target.closest('button');
+            if (!button) return;
+
+            if (button.dataset.action === 'clear') clearAll();
+            else if (button.dataset.action === 'back') backspace();
+            else if (button.dataset.action === 'equals') calculate();
+            else addKey(button.dataset.key);
+        });
+
+        /* ---------- Keyboard ---------- */
+        document.addEventListener('keydown', (event) => {
+            const key = event.key;
+
+            if (/^[0-9]$/.test(key) || '+-*/.()'.includes(key)) {
+                event.preventDefault();
+                addKey(key);
+            } else if (key === 'Enter' || key === '=') {
+                event.preventDefault();
+                calculate();
+            } else if (key === 'Backspace') {
+                event.preventDefault();
+                backspace();
+            } else if (key === 'Escape' || key === 'Delete') {
+                clearAll();
+            }
+        });
     </script>
 </body>
 </html>
