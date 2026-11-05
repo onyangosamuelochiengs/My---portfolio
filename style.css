@@ -26,7 +26,7 @@ body {
     line-height: 1.6;
 }
 
-/* ---------- Navbar ---------- */
+/* ---------- Navbar (shared by all pages) ---------- */
 .navbar {
     position: sticky;
     top: 0;
@@ -106,7 +106,7 @@ h2 {
     font-size: 1.05rem;
 }
 
-/* ---------- Panels & cards ---------- */
+/* ---------- Panels & project cards ---------- */
 .panel,
 .card {
     background: #fff;
@@ -137,9 +137,11 @@ h2 {
     color: var(--muted);
 }
 
-.card .btn {
-    margin-top: auto;
-    align-self: flex-start;
+.card img {
+    width: 100%;
+    height: auto;
+    border-radius: 8px;
+    border: 1px solid #e3e6ea;
 }
 
 .tags span {
@@ -150,6 +152,13 @@ h2 {
     border-radius: 20px;
     font-size: 13px;
     margin: 0 6px 6px 0;
+}
+
+.card-links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-top: auto;
 }
 
 /* ---------- Skills ---------- */
@@ -185,6 +194,19 @@ h2 {
     background: var(--blue-dark);
 }
 
+.btn-outline {
+    background: #fff;
+    color: var(--blue);
+    border: 2px solid var(--blue);
+    padding: 8px 16px;
+}
+
+.btn-outline:hover,
+.btn-outline:focus-visible {
+    background: #e7f1ff;
+    color: var(--blue-dark);
+}
+
 .contact-links {
     display: flex;
     flex-wrap: wrap;
@@ -203,6 +225,220 @@ footer p {
     margin: 0;
 }
 
+/* ---------- Project pages (calculator & weather) ---------- */
+.page-intro {
+    text-align: center;
+    margin-bottom: 24px;
+}
+
+.page-intro h1 {
+    color: var(--navy);
+    margin: 0 0 4px;
+    font-size: 1.8rem;
+}
+
+.page-intro p {
+    color: var(--muted);
+    margin: 0;
+}
+
+.app-card {
+    margin: 0 auto;
+    padding: 25px;
+    background: #fff;
+    border-radius: 15px;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+    text-align: center;
+}
+
+.calc-card {
+    max-width: 340px;
+}
+
+.weather-card {
+    max-width: 460px;
+}
+
+/* Calculator */
+.calc-display {
+    width: 100%;
+    height: 60px;
+    margin-bottom: 20px;
+    text-align: right;
+    font-size: 24px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    padding: 5px 10px;
+    background: #f8f9fa;
+    color: #222;
+}
+
+.keys {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 10px;
+}
+
+.keys button {
+    height: 50px;
+    font-size: 18px;
+    font-weight: bold;
+    border: none;
+    border-radius: 8px;
+    background: #e9ecef;
+    color: #222;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.keys button:hover {
+    background: #dee2e6;
+}
+
+.keys button.op {
+    background: var(--blue);
+    color: #fff;
+}
+
+.keys button.op:hover {
+    background: var(--blue-dark);
+}
+
+.keys button.clear {
+    background: #dc3545;
+    color: #fff;
+}
+
+.keys button.clear:hover {
+    background: #bd2130;
+}
+
+.keys button.equals {
+    grid-row: span 2;
+    height: auto;
+}
+
+.keys button.zero {
+    grid-column: span 2;
+}
+
+.keys button:focus-visible {
+    outline: 3px solid var(--gold);
+    outline-offset: 2px;
+}
+
+/* Weather */
+.search-row {
+    display: flex;
+}
+
+.search-row input {
+    flex: 1;
+    min-width: 0;
+    height: 44px;
+    font-size: 16px;
+    border: 1px solid #ddd;
+    border-radius: 8px 0 0 8px;
+    padding: 0 12px;
+    outline: none;
+}
+
+.search-row input:focus {
+    border-color: var(--blue);
+}
+
+.search-row button {
+    height: 44px;
+    padding: 0 18px;
+    font-size: 16px;
+    font-weight: bold;
+    border: none;
+    background: var(--blue);
+    color: #fff;
+    border-radius: 0 8px 8px 0;
+    cursor: pointer;
+}
+
+.search-row button:hover {
+    background: var(--blue-dark);
+}
+
+.search-row button:disabled {
+    background: #9ec5fe;
+    cursor: wait;
+}
+
+.weather-info {
+    margin-top: 25px;
+    min-height: 150px;
+}
+
+.weather-info h3 {
+    margin: 0;
+}
+
+.temp {
+    font-size: 48px;
+    font-weight: bold;
+    margin: 10px 0;
+    color: #222;
+}
+
+.details {
+    display: flex;
+    justify-content: space-around;
+    margin-top: 15px;
+    font-size: 14px;
+    color: #555;
+}
+
+#status {
+    color: #666;
+}
+
+#status.error {
+    color: #dc3545;
+    font-weight: bold;
+}
+
+.forecast-wrap {
+    margin-top: 25px;
+    border-top: 1px solid #eee;
+    padding-top: 18px;
+}
+
+.forecast-title {
+    margin: 0 0 12px;
+    font-size: 16px;
+}
+
+.forecast {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(80px, 1fr));
+    gap: 8px;
+}
+
+.forecast-day {
+    background: #f8f9fa;
+    border-radius: 8px;
+    padding: 10px 6px;
+    font-size: 13px;
+}
+
+.forecast-day strong {
+    display: block;
+    margin-bottom: 4px;
+}
+
+.forecast-day .desc {
+    color: #555;
+    min-height: 2.6em;
+}
+
+.forecast-day .range {
+    font-weight: bold;
+}
+
 /* ---------- Small screens ---------- */
 @media (max-width: 600px) {
     .navbar {
@@ -211,7 +447,8 @@ footer p {
     }
 
     .panel,
-    .card {
+    .card,
+    .app-card {
         padding: 20px;
     }
 }
